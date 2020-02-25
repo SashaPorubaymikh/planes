@@ -12,6 +12,8 @@ sf::Texture PARATROOPERS[4][2];
 sf::Texture CLOUDS[3];
 sf::Texture BALLOONS[3];
 
+sf::Font mainFont;
+
 sf::RenderWindow window;
 
 int SCREEN_SIZE[2];

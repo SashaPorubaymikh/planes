@@ -8,6 +8,8 @@ extern sf::Texture PARATROOPERS[4][2];
 extern sf::Texture CLOUDS[3];
 extern sf::Texture BALLOONS[3];
 
+extern sf::Font mainFont;
+
 extern sf::RenderWindow window;
 extern int SCREEN_SIZE[2];
 extern float SCREEN_DIFF;
@@ -69,9 +71,14 @@ void loadImages() {
 	BALLOONS[2].loadFromFile("Data/Images/background/balloons/2.png");
 }
 
+void loadFonts() {
+	mainFont.loadFromFile("Data/Fonts/mainFont.ttf");
+}
+
 void load() {
 	std::srand(std::time(NULL));
 	loadImages();
+	loadFonts();
 
 	SCREEN_SIZE[0] = sf::VideoMode::getDesktopMode().width;
 	SCREEN_SIZE[1] = sf::VideoMode::getDesktopMode().height;

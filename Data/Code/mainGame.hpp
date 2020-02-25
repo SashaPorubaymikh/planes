@@ -3,6 +3,7 @@
 extern sf::RenderWindow window;
 extern int SCREEN_SIZE[2];
 extern float SCREEN_DIFF;
+extern sf::Font mainFont;
 
 bool Comp(BgObject a, BgObject b) {
 	return (a.getRect().top + a.getRect().height) < (b.getRect().top + b.getRect().height);
@@ -35,6 +36,8 @@ void mainGame() {
 
 
 	bool turnLeft = false, turnRight = false, spacePressed = false;
+
+	unsigned int playerPoints = 0, botPoints = 0;
 
 	while(window.isOpen()) {
 		sf::Event event;
@@ -89,12 +92,16 @@ void mainGame() {
 		if (!player.update(turnLeft, turnRight, bullets, bgObjects, people, sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))) {
 			explosions.push_back(Explosion(player.getRect()));
 			paratroopers.push_back(Paratrooper(player.getRect().left, player.getRect().top, player.getType()));
+			botPoints++;
+			if (playerPoints > 0) playerPoints--;
 		}
 		player.draw(window);
 
 		if (!updateNPC(player, enemy, bullets, people, bgObjects)) {
 			explosions.push_back(Explosion(enemy.getRect()));
 			paratroopers.push_back(Paratrooper(enemy.getRect().left, enemy.getRect().top, enemy.getType()));
+			playerPoints++;
+			if (botPoints > 0) botPoints--;
 		}
 		enemy.draw(window);
 
@@ -121,6 +128,19 @@ void mainGame() {
 				paratroopers.erase(paratroopers.begin() + paratrooper);
 
 		for (auto &cloud : clouds) cloud.draw(&window);
+
+		sf::Text pointsText;
+		pointsText.setFont(mainFont);
+		pointsText.setString(std::to_string(playerPoints) + ':' + std::to_string(botPoints));
+		pointsText.setCharacterSize(20 * SCREEN_DIFF);
+		pointsText.setFillColor(sf::Color::Black);
+		sf::Rect<float> textRect = pointsText.getGlobalBounds();
+		pointsText.setPosition(float(SCREEN_SIZE[0]) / 2 - textRect.width / 2 + 2*SCREEN_DIFF, 20*SCREEN_DIFF + 2*SCREEN_DIFF);
+		window.draw(pointsText);
+		pointsText.setFillColor(sf::Color(200, 200, 200));
+		textRect = pointsText.getGlobalBounds();
+		pointsText.setPosition(float(SCREEN_SIZE[0]) / 2 - textRect.width / 2, 20*SCREEN_DIFF);
+		window.draw(pointsText);
 		
 
 		window.display();
