@@ -2,8 +2,6 @@
 #define MAIN_HPP
 
 #define PI 3.14159265
-#define SCREEN_WIDTH 1366
-#define SCREEN_HEIGHT 768
 
 #include <SFML/Graphics.hpp>
 #include <iostream>

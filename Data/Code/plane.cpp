@@ -22,9 +22,22 @@ Plane::Plane(int x, int y, int angle, int colorNum) {
 	if (!lookToRight) planeSprite.scale(1, -1);
 	yFlip = 1;
 	forceTimer = 0;
+	invulnerabilityCounter = 0;
+	isInvisible = false;
 }
 
 bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, std::vector<BgObject>& bgObjects, std::vector<People> &people, bool isShiftPressed) {
+	if (invulnerabilityCounter > 0) invulnerabilityCounter--;
+	if (invulnerabilityCounter % 10 == 0 and invulnerabilityCounter != 0) {
+		if (isInvisible) planeSprite.setColor(sf::Color(255, 255, 255, 255));
+		else planeSprite.setColor(sf::Color(255, 255, 255, 120));
+		isInvisible = !isInvisible;
+	}
+	if (isInvisible and invulnerabilityCounter == 0) {
+		planeSprite.setColor(sf::Color(255, 255, 255, 255));
+		isInvisible = false;
+	}
+
 	if (deadTimer > 0 and isDead()) planeSprite.setPosition(-100 * SCREEN_DIFF, -100 * SCREEN_DIFF);
 	if (turnLeft and !turnRight) planeSprite.rotate(-2);
 	if (turnRight and !turnLeft) planeSprite.rotate(2);
@@ -49,6 +62,7 @@ bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, 
 		forceTimer++;
 		if (forceTimer == 120) {
 			die();
+			causeOfDeath = 2;
 			return false;
 		}
 		moveSpeed = float(speed) * 2;
@@ -59,13 +73,10 @@ bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, 
 	sf::Rect<float> planeRect = planeSprite.getGlobalBounds();
 	for (int bull = 0; bull < bullets.size(); bull++) {
 		sf::Rect<float> bulletRect = bullets[bull].getRect();
-		// std::cout << (id != bullets[bull].id) << std::endl;
-		// std::cout << id << std::endl;
-		// std::cout << (bullets[bull].id) << std::endl;
-		// std::cout << std::endl;
-		if (planeRect.intersects(bulletRect) and id != bullets[bull].id) {
+		if (planeRect.intersects(bulletRect) and id != bullets[bull].id and invulnerabilityCounter == 0) {
 			bullets.erase(bullets.begin() + bull);
 			die();
+			causeOfDeath = 1;
 			return false;
 		}
 	}
@@ -78,11 +89,13 @@ bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, 
 				if (expRect.intersects(bgO.getRect())) bgO.burn(people);
 			}
 			die();
+			causeOfDeath = 2;
 			return false;
 		}
 	}
 	if ((planeRect.left < 0 or planeRect.top < 0 or planeRect.left + planeRect.width > SCREEN_SIZE[0] or planeRect.top + planeRect.height > SCREEN_SIZE[1]) and !isDead() ) {
 		die();
+		causeOfDeath = 2;
 		return false;
 	}
 	if (isDead()) {
@@ -116,6 +129,9 @@ void Plane::reset() {
 	deadTimer = 0;
 	shootTimer = 0;
 	forceTimer = 0;
+	invulnerabilityCounter = 90;
+	isInvisible = false;
+	planeSprite.setColor(sf::Color(255, 255, 255, 255));
 }
 
 sf::Rect<float> Plane::getRect() {
@@ -136,4 +152,8 @@ int Plane::getType() {
 
 int Plane::getRotation() {
 	return planeSprite.getRotation();
+}
+
+int Plane::getCauseOfDeath() {
+	return causeOfDeath;
 }

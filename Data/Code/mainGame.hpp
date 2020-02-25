@@ -55,6 +55,7 @@ void mainGame() {
 						player.die();
 						explosions.push_back(Explosion(player.getRect()));
 						paratroopers.push_back(Paratrooper(player.getRect().left, player.getRect().top, player.getType()));
+						if (playerPoints > 0) playerPoints -= 1;
 						break;
 					case sf::Keyboard::Space:
 						spacePressed = true;
@@ -92,16 +93,20 @@ void mainGame() {
 		if (!player.update(turnLeft, turnRight, bullets, bgObjects, people, sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))) {
 			explosions.push_back(Explosion(player.getRect()));
 			paratroopers.push_back(Paratrooper(player.getRect().left, player.getRect().top, player.getType()));
-			botPoints++;
-			if (playerPoints > 0) playerPoints--;
+			if (player.getCauseOfDeath() == 1)
+				botPoints++;
+			else if (player.getCauseOfDeath() == 2 and playerPoints > 0)
+				playerPoints -= 1;
 		}
 		player.draw(window);
 
 		if (!updateNPC(player, enemy, bullets, people, bgObjects)) {
 			explosions.push_back(Explosion(enemy.getRect()));
 			paratroopers.push_back(Paratrooper(enemy.getRect().left, enemy.getRect().top, enemy.getType()));
-			playerPoints++;
-			if (botPoints > 0) botPoints--;
+			if (enemy.getCauseOfDeath() == 1)
+				playerPoints++;
+			else if (enemy.getCauseOfDeath() == 2 and botPoints > 0)
+				botPoints -= 1;
 		}
 		enemy.draw(window);
 

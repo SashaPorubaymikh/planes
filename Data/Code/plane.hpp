@@ -17,6 +17,7 @@ class Plane {
 		void shoot(std::vector<Bullet>&, sf::Texture*);
 		int getType();
 		int getRotation();
+		int getCauseOfDeath();
 
 		unsigned int id;
 
@@ -31,6 +32,9 @@ class Plane {
 		bool lookToRight;
 		float yFlip;
 		int forceTimer;
+		int causeOfDeath;
+		int invulnerabilityCounter;
+		bool isInvisible;
 };
 
 #endif
