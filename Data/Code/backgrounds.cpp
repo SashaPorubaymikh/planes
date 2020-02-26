@@ -5,18 +5,20 @@ extern int SCREEN_SIZE[2];
 extern float SCREEN_DIFF;
 
 BgObject::BgObject() {
-	type = rand() % 3;
+	type = rand()%3;
+	isBurned = peopleMade = false;
+	animTimer = 0;
+
 	bgSprite.setTexture(BG_OBJECTS[type][0]);
 	bgSprite.setScale(4 * SCREEN_DIFF, 4 * SCREEN_DIFF);
 	sf::Rect<float> tempRect = bgSprite.getGlobalBounds();
-	bgSprite.setPosition(10 + rand()%int(SCREEN_SIZE[0] - SCREEN_DIFF * 20.f - tempRect.width), SCREEN_SIZE[1] - SCREEN_DIFF * 5 - tempRect.height - rand() % 15);
-	tempRect = bgSprite.getGlobalBounds();
-	isBurned = false;
-	animTimer = 0;
-	peopleMade = false;
+	bgSprite.setPosition(
+			10 + rand()%int(SCREEN_SIZE[0] - SCREEN_DIFF * 20.f - tempRect.width), 
+			SCREEN_SIZE[1] - SCREEN_DIFF * 5 - tempRect.height - rand()%15
+	);
 }
 
-void BgObject::draw(sf::RenderWindow *window) {
+void BgObject::draw(sf::RenderWindow &window) {
 	if (isBurned) {
 		animTimer++;
 		if (animTimer > 24) animTimer = 0;
@@ -24,7 +26,7 @@ void BgObject::draw(sf::RenderWindow *window) {
 			bgSprite.setTexture(BG_OBJECTS[type][(animTimer + 1) / 8]);
 		}
 	}
-	window->draw(bgSprite);
+	window.draw(bgSprite);
 }
 
 void BgObject::burn(std::vector<People> &people) {
@@ -33,7 +35,7 @@ void BgObject::burn(std::vector<People> &people) {
 		int countOfPeople = rand()%3;
 		for (int i = 0; i <= countOfPeople; i++) {
 			sf::Rect<float> tempRect = bgSprite.getGlobalBounds();
-			people.push_back(People(\
+			people.push_back(People(
 				tempRect.left + tempRect.width / 2 - 5 + rand()%10,
 				tempRect.top + tempRect.height - 10 - 5 + rand()%10
 			));

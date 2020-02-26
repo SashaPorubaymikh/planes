@@ -4,7 +4,7 @@
 class Explosion {
 	public:
 		Explosion(sf::Rect<float>);
-		bool draw(sf::RenderWindow*);
+		bool draw(sf::RenderWindow&);
 	private:
 		sf::Sprite explosionSprite;
 		short int timer;

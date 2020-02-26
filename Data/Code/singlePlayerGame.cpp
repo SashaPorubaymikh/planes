@@ -1,21 +1,25 @@
-#include "npc.hpp"
+#include "main.hpp"
 
 extern sf::RenderWindow window;
 extern int SCREEN_SIZE[2];
 extern float SCREEN_DIFF;
 extern sf::Font mainFont;
+extern sf::Texture BACKGROUND;
 
-bool Comp(BgObject a, BgObject b) {
-	return (a.getRect().top + a.getRect().height) < (b.getRect().top + b.getRect().height);
-}
-
-void mainGame() {
+void singlePlayer() {
 	sf::Sprite backgroundSprite;
-	float maxScreenDiffForBG = std::max(float((float)SCREEN_SIZE[0] / 1366), float((float)SCREEN_SIZE[1]) / 768);
+	float maxScreenDiffForBG = std::max(float(SCREEN_SIZE[0]) / 1366, float(SCREEN_SIZE[1]) / 768);
 	backgroundSprite.setTexture(BACKGROUND);
 	backgroundSprite.setScale(5 * maxScreenDiffForBG, 5 * maxScreenDiffForBG);
 
+	std::vector<Bullet> bullets;
+	std::vector<Explosion> explosions;
+	std::vector<People> people;
+	std::vector<Paratrooper> paratroopers;
+	std::array<Cloud, 5> clouds;
+	std::array<Balloon, 5> balloons;
 	std::vector<BgObject> bgObjects;
+
 	int countOfBgObjects = 40 + rand()%20;
 	for (int bgObj = 0; bgObj <= countOfBgObjects; bgObj++) {
 		bgObjects.push_back(BgObject());
@@ -24,14 +28,7 @@ void mainGame() {
 		return (a.getRect().top + a.getRect().height) < (b.getRect().top + b.getRect().height);
 	});
 
-	std::vector<Bullet> bullets;
-	std::vector<Explosion> explosions;
-	std::vector<People> people;
-	std::vector<Paratrooper> paratroopers;
-	std::array<Cloud, 5> clouds;
-	std::array<Balloon, 5> balloons;
-
-	Plane player(40, 40, 0, 0); // 4th parameter - number of plane's color
+	Plane player(40, 40, 0, 0);
 	Plane enemy(1320, 40, 180, 1);
 
 
@@ -45,52 +42,32 @@ void mainGame() {
 			if (event.type == sf::Event::Closed) window.close();
 			if (event.type == sf::Event::KeyPressed)
 				switch(event.key.code) {
-					case sf::Keyboard::Left:
-						turnLeft = true;
-						break;
-					case sf::Keyboard::Right:
-						turnRight = true;
-						break;
 					case sf::Keyboard::Delete:
 						player.die();
 						explosions.push_back(Explosion(player.getRect()));
 						paratroopers.push_back(Paratrooper(player.getRect().left, player.getRect().top, player.getType()));
 						if (playerPoints > 0) playerPoints -= 1;
 						break;
-					case sf::Keyboard::Space:
-						spacePressed = true;
-						break;
 					case sf::Keyboard::Escape:
 						window.close();
-						break;
-					case sf::Keyboard::F1:
-						window.setFramerateLimit(1);
-						break;
-				}
-			if (event.type == sf::Event::KeyReleased)
-				switch(event.key.code) {
-					case sf::Keyboard::Left:
-						turnLeft = false;
-						break;
-					case sf::Keyboard::Right:
-						turnRight = false;
-						break;
-					case sf::Keyboard::Space:
-						spacePressed = false;
-						break;
-					case sf::Keyboard::F1:
-						window.setFramerateLimit(60);
 						break;
 				}
 		}
 
-		if (spacePressed) player.shoot(bullets, &BULLET);
-
 		window.clear(sf::Color::Black);
-		window.draw(backgroundSprite);
-		for (auto &balloon: balloons) balloon.draw(&window);
 
-		if (!player.update(turnLeft, turnRight, bullets, bgObjects, people, sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))) {
+		window.draw(backgroundSprite);
+		for (auto &balloon: balloons) 
+			balloon.draw(window);
+
+		if (!player.update(
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Left), 
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Right), 
+			bullets, 
+			bgObjects, 
+			people, 
+			sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+		) {
 			explosions.push_back(Explosion(player.getRect()));
 			paratroopers.push_back(Paratrooper(player.getRect().left, player.getRect().top, player.getType()));
 			if (player.getCauseOfDeath() == 1)
@@ -98,6 +75,7 @@ void mainGame() {
 			else if (player.getCauseOfDeath() == 2 and playerPoints > 0)
 				playerPoints -= 1;
 		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) player.shoot(bullets);
 		player.draw(window);
 
 		if (!updateNPC(player, enemy, bullets, people, bgObjects)) {
@@ -113,30 +91,30 @@ void mainGame() {
 		for (int bullet = 0; bullet < bullets.size(); bullet++) {
 			if (!bullets[bullet].update(bgObjects, people, paratroopers))
 				bullets.erase(bullets.begin() + bullet);
-			else bullets[bullet].draw(&window);
+			else bullets[bullet].draw(window);
 		}
 
 		for (int exp = 0; exp < explosions.size(); exp++)
-			if (!explosions[exp].draw(&window))
+			if (!explosions[exp].draw(window))
 				explosions.erase(explosions.begin() + exp);
 
-		for (auto &bgObj : bgObjects) 
-			bgObj.draw(&window);
+		for (auto &bgObject : bgObjects) 
+			bgObject.draw(window);
 		
 		for (int person = 0; person < people.size(); person++)
-			if (!people[person].draw(&window)) {
+			if (!people[person].draw(window))
 				people.erase(people.begin() + person);
-			}
 
 		for (int paratrooper = 0; paratrooper < paratroopers.size(); paratrooper++)
-			if (!paratroopers[paratrooper].draw(&window))
+			if (!paratroopers[paratrooper].draw(window))
 				paratroopers.erase(paratroopers.begin() + paratrooper);
 
-		for (auto &cloud : clouds) cloud.draw(&window);
+		for (auto &cloud : clouds) 
+			cloud.draw(window);
 
 		sf::Text pointsText;
 		pointsText.setFont(mainFont);
-		pointsText.setString(std::to_string(playerPoints) + ':' + std::to_string(botPoints));
+		pointsText.setString(std::to_string(playerPoints) + " | " + std::to_string(botPoints));
 		pointsText.setCharacterSize(20 * SCREEN_DIFF);
 		pointsText.setFillColor(sf::Color::Black);
 		sf::Rect<float> textRect = pointsText.getGlobalBounds();
@@ -150,4 +128,4 @@ void mainGame() {
 
 		window.display();
 	}
-}
+};

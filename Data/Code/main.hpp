@@ -1,7 +1,7 @@
 #ifndef MAIN_HPP
 #define MAIN_HPP
 
-#define PI 3.14159265
+constexpr auto PI = 3.14159265;
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -21,5 +21,8 @@
 #include "paratroopers.hpp"
 #include "cloud.hpp"
 #include "balloon.hpp"
+#include "load.hpp"
+#include "singlePlayerGame.hpp"
+#include "updateNPC.hpp"
 
 #endif

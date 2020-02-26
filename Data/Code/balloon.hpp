@@ -1,7 +1,7 @@
 class Balloon {
 	public:
 		Balloon();
-		void draw(sf::RenderWindow*);
+		void draw(sf::RenderWindow&);
 		void reset();
 	private:
 		float speed;

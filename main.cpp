@@ -1,6 +1,4 @@
 #include "Data/Code/main.hpp"
-#include "Data/Code/load.hpp"
-#include "Data/Code/mainGame.hpp"
 
 sf::Texture PLANES_IMAGES[4];
 sf::Texture BULLET;
@@ -21,7 +19,7 @@ float SCREEN_DIFF;
 
 int main(int argc, char**argv) {
 	load();
-	mainGame();
+	singlePlayer();
 
 	return 0;
 }

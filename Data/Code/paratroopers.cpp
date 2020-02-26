@@ -12,15 +12,14 @@ Paratrooper::Paratrooper (int x, int y, int colorNum) {
 	sprite.setScale(4 * SCREEN_DIFF, 4 * SCREEN_DIFF);
 	sprite.setPosition(x + 30 * SCREEN_DIFF, y + 10 * SCREEN_DIFF);
 
-	isLanded = false;
+	isLanded = isDowned = false;
 	rotateRight = true;
-	isDowned = false;
 	downedAnimCount = 0;
 }
 
-bool Paratrooper::draw(sf::RenderWindow *window) {
+bool Paratrooper::draw(sf::RenderWindow &window) {
 	if (!isLanded and !isDowned) {
-		sprite.move(0, 1 * SCREEN_DIFF);
+		sprite.move(0, SCREEN_DIFF);
 		sf::Rect<float> spriteRect = sprite.getGlobalBounds();
 		if (spriteRect.top + spriteRect.height >= SCREEN_SIZE[1] - 10 * SCREEN_DIFF) land();
 	}
@@ -49,11 +48,11 @@ bool Paratrooper::draw(sf::RenderWindow *window) {
 
 		sf::Rect<float> posRect = sprite.getGlobalBounds();
 		if (posRect.left + posRect.width <= 0 or posRect.left > SCREEN_SIZE[0]) return false;
-		if (goRight) sprite.move(1 * SCREEN_DIFF, 0);
-		else sprite.move(-1 * SCREEN_DIFF, 0);
+		if (goRight) sprite.move(SCREEN_DIFF, 0);
+		else sprite.move(-SCREEN_DIFF, 0);
 	}
 
-	window->draw(sprite);
+	window.draw(sprite);
 	return true;
 }
 

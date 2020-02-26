@@ -14,7 +14,7 @@ class Plane {
 		bool isDead();
 		void reset();
 		sf::Rect<float> getRect();
-		void shoot(std::vector<Bullet>&, sf::Texture*);
+		void shoot(std::vector<Bullet>&);
 		int getType();
 		int getRotation();
 		int getCauseOfDeath();
@@ -23,18 +23,10 @@ class Plane {
 
 	private:
 		sf::Sprite planeSprite;
-		int speed;
-		bool deadMan;
 		std::array<float, 3> startOptions;
-		short int deadTimer;
-		short int shootTimer;
-		int type;
-		bool lookToRight;
-		float yFlip;
-		int forceTimer;
-		int causeOfDeath;
-		int invulnerabilityCounter;
-		bool isInvisible;
+		short int deadTimer, shootTimer;
+		bool lookToRight, isInvisible, deadMan;
+		int forceTimer, causeOfDeath, invulnerabilityCounter, type, speed;
 };
 
 #endif

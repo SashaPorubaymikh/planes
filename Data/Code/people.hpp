@@ -4,13 +4,12 @@
 class People {
 	public:
 		People(int, int);
-		bool draw(sf::RenderWindow*);
+		bool draw(sf::RenderWindow&);
 	private:
 		sf::Sprite sprite;
 		short int angle;
 		int animTimer;
-		bool rotateRight;
-		bool goRight;
+		bool rotateRight, goRight;
 		float speed;
 };
 

@@ -6,7 +6,7 @@
 class BgObject {
 	public:
 		BgObject();
-		void draw(sf::RenderWindow*);
+		void draw(sf::RenderWindow&);
 		void burn(std::vector<People>&);
 		sf::Rect<float> getRect();
 		int getType();

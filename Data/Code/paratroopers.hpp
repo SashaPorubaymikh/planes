@@ -4,7 +4,7 @@
 class Paratrooper {
 	public:
 		Paratrooper(int, int, int);
-		bool draw(sf::RenderWindow*);
+		bool draw(sf::RenderWindow&);
 		void land();
 		void down();
 		sf::Rect<float> getRect();

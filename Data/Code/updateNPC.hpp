@@ -1,0 +1,1 @@
+bool updateNPC(Plane, Plane&, std::vector<Bullet>&, std::vector<People>&, std::vector<BgObject>&);

@@ -1,2 +1,0 @@
-#!/bin/bash
-c++ main.cpp Data/Code/backgrounds.cpp Data/Code/balloon.cpp Data/Code/bullet.cpp Data/Code/cloud.cpp Data/Code/explosion.cpp Data/Code/paratroopers.cpp Data/Code/people.cpp Data/Code/plane.cpp -lsfml-system -lsfml-window -lsfml-graphics -oplanes
