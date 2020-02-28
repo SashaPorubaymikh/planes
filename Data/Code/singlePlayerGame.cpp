@@ -10,14 +10,14 @@ void singlePlayer() {
 	sf::Sprite backgroundSprite;
 	float maxScreenDiffForBG = std::max(float(SCREEN_SIZE[0]) / 1366, float(SCREEN_SIZE[1]) / 768);
 	backgroundSprite.setTexture(BACKGROUND);
-	backgroundSprite.setScale(5 * maxScreenDiffForBG, 5 * maxScreenDiffForBG);
+	backgroundSprite.setScale(2.5 * maxScreenDiffForBG, 2.5 * maxScreenDiffForBG);
 
 	std::vector<Bullet> bullets;
 	std::vector<Explosion> explosions;
 	std::vector<People> people;
 	std::vector<Paratrooper> paratroopers;
 	std::array<Cloud, 5> clouds;
-	std::array<Balloon, 5> balloons;
+	std::array<Balloon, 1> balloons;
 	std::vector<BgObject> bgObjects;
 
 	int countOfBgObjects = 40 + rand()%20;
@@ -36,6 +36,9 @@ void singlePlayer() {
 
 	unsigned int playerPoints = 0, botPoints = 0;
 
+	std::string cheatString = "";
+	bool isGodMode = false, isMinigun = false;
+
 	while(window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -52,7 +55,11 @@ void singlePlayer() {
 						window.close();
 						break;
 				}
+			if (event.type == sf::Event::TextEntered)
+				cheatString += char(event.text.unicode);
 		}
+
+		checkForCheat(cheatString, backgroundSprite, player, enemy, isGodMode, isMinigun);
 
 		window.clear(sf::Color::Black);
 
@@ -66,7 +73,9 @@ void singlePlayer() {
 			bullets, 
 			bgObjects, 
 			people, 
-			sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+			sf::Keyboard::isKeyPressed(sf::Keyboard::LShift),
+			isGodMode=isGodMode,
+			isMinigun=isMinigun)
 		) {
 			explosions.push_back(Explosion(player.getRect()));
 			paratroopers.push_back(Paratrooper(player.getRect().left, player.getRect().top, player.getType()));
@@ -129,3 +138,14 @@ void singlePlayer() {
 		window.display();
 	}
 };
+
+void checkForCheat(std::string &str, sf::Sprite &backgroundSprite, Plane &player, Plane &enemy, bool &isGodMode, bool &isMinigun) {
+	if (str.size() > 7 and str.substr(str.size() - 7) == "Toughie") {
+		isGodMode = !isGodMode;
+		str.clear();
+	}
+	if (str.size() > 6 and str.substr(str.size() - 6) == "Arnold") {
+		isMinigun = !isMinigun;
+		str.clear();
+	}
+}

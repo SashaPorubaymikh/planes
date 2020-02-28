@@ -8,7 +8,7 @@
 class Plane {
 	public:
 		Plane(int, int, int, int);
-		bool update(bool, bool, std::vector<Bullet>&, std::vector<BgObject>&, std::vector<People>&, bool);
+		bool update(bool, bool, std::vector<Bullet>&, std::vector<BgObject>&, std::vector<People>&, bool, bool isgodMode=false, bool isMinigun=false);
 		void draw(sf::RenderWindow&);
 		void die();
 		bool isDead();

@@ -22,7 +22,7 @@ Plane::Plane(int x, int y, int angle, int colorNum) {
 	forceTimer = invulnerabilityCounter = 0;
 }
 
-bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, std::vector<BgObject>& bgObjects, std::vector<People> &people, bool isShiftPressed) {
+bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, std::vector<BgObject>& bgObjects, std::vector<People> &people, bool isShiftPressed, bool isGodMode, bool isMinigun) {
 	if (invulnerabilityCounter > 0) invulnerabilityCounter--;
 	if (invulnerabilityCounter % 10 == 0 and invulnerabilityCounter != 0) {
 		if (isInvisible) planeSprite.setColor(sf::Color(255, 255, 255, 255));
@@ -51,7 +51,7 @@ bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, 
 	float moveSpeed = speed;
 	if (isShiftPressed && !isDead()) {
 		forceTimer++;
-		if (forceTimer == 120) {
+		if (forceTimer == 120 and !isGodMode) {
 			die();
 			causeOfDeath = 2;
 			return false;
@@ -67,7 +67,7 @@ bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, 
 	sf::Rect<float> planeRect = planeSprite.getGlobalBounds();
 	for (int bull = 0; bull < bullets.size(); bull++) {
 		sf::Rect<float> bulletRect = bullets[bull].getRect();
-		if (planeRect.intersects(bulletRect) and id != bullets[bull].id and invulnerabilityCounter == 0) {
+		if (planeRect.intersects(bulletRect) and id != bullets[bull].id and invulnerabilityCounter == 0 and !isGodMode) {
 			bullets.erase(bullets.begin() + bull);
 			die();
 			causeOfDeath = 1;
@@ -76,7 +76,7 @@ bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, 
 	}
 	for (auto &bgObject : bgObjects) {
 		sf::Rect<float> tempRect = bgObject.getRect();
-		if (planeRect.intersects(tempRect)) {
+		if (planeRect.intersects(tempRect) and !isGodMode) {
 			bgObject.burn(people);
 			sf::Rect<float> expRect(planeRect.left - 25, planeRect.top - 25, planeRect.width + 50, planeRect.height + 50);
 			for (auto &bgO : bgObjects) {
@@ -100,6 +100,7 @@ bool Plane::update(bool turnLeft, bool turnRight, std::vector<Bullet> &bullets, 
 	}
 
 	if (shootTimer > 0) shootTimer--;
+	if (isMinigun) shootTimer = 0;
 
 	return true;
 }
